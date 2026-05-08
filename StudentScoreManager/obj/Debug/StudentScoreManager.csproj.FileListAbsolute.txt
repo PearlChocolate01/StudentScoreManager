@@ -1,0 +1,7 @@
+D:\Info\My\proj\StudentScoreManager\StudentScoreManager\bin\Debug\StudentScoreManager.exe.config
+D:\Info\My\proj\StudentScoreManager\StudentScoreManager\bin\Debug\StudentScoreManager.exe
+D:\Info\My\proj\StudentScoreManager\StudentScoreManager\bin\Debug\StudentScoreManager.pdb
+D:\Info\My\proj\StudentScoreManager\StudentScoreManager\obj\Debug\StudentScoreManager.csproj.AssemblyReference.cache
+D:\Info\My\proj\StudentScoreManager\StudentScoreManager\obj\Debug\StudentScoreManager.csproj.CoreCompileInputs.cache
+D:\Info\My\proj\StudentScoreManager\StudentScoreManager\obj\Debug\StudentScoreManager.exe
+D:\Info\My\proj\StudentScoreManager\StudentScoreManager\obj\Debug\StudentScoreManager.pdb
