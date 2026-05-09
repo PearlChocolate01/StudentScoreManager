@@ -21,6 +21,9 @@ namespace StudentScoreManager
                     case "1":
                         AddStudent();
                         break;
+                    case "2":
+                        DeleteStudent();
+                        break;
                     default:
                         Console.WriteLine("输入无效，请重新选择");
                         break;
@@ -36,6 +39,7 @@ namespace StudentScoreManager
             Console.Clear();
             Console.WriteLine("========== 学生成绩管理系统 ==========");
             Console.WriteLine("1. 添加学生");
+            Console.WriteLine("2. 删除学生");
             Console.WriteLine("======================================");
             Console.WriteLine("请选择操作：");
         }
@@ -102,6 +106,27 @@ namespace StudentScoreManager
             };
             students.Add(std);
             Console.WriteLine($"成功添加学生【{id} {name}】！");
+        }
+
+        static void DeleteStudent()
+        {
+            Console.WriteLine("\n--- 删除学生 ---");
+            Console.WriteLine("请输入要删除的学号：");
+            string id = Console.ReadLine();
+
+            Student std = students.Find(s => s.Id == id);
+            if(std == null)
+            {
+                Console.WriteLine("未找到该学生");
+                return;
+            }
+
+            Console.WriteLine($"确认删除【{id} {std.Name}】？(y/n)");
+            if(Console.ReadLine() == "y")
+            {
+                students.Remove(std);
+                Console.WriteLine("删除成功！");
+            }
         }
     }
 
