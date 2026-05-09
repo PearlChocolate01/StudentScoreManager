@@ -24,6 +24,9 @@ namespace StudentScoreManager
                     case "2":
                         DeleteStudent();
                         break;
+                    case "3":
+                        UpdateStudent();
+                        break;
                     default:
                         Console.WriteLine("输入无效，请重新选择");
                         break;
@@ -40,6 +43,7 @@ namespace StudentScoreManager
             Console.WriteLine("========== 学生成绩管理系统 ==========");
             Console.WriteLine("1. 添加学生");
             Console.WriteLine("2. 删除学生");
+            Console.WriteLine("3. 修改学生信息");
             Console.WriteLine("======================================");
             Console.WriteLine("请选择操作：");
         }
@@ -127,6 +131,80 @@ namespace StudentScoreManager
                 students.Remove(std);
                 Console.WriteLine("删除成功！");
             }
+        }
+    
+        static void UpdateStudent()
+        {
+            Console.WriteLine("\n--- 修改学生信息 ---");
+            Console.WriteLine("请输入要修改的学号：");
+            string id = Console.ReadLine();
+
+            Student std = students.Find(s => s.Id == id);
+            if(std == null)
+            {
+                Console.WriteLine("未找到该学生");
+                return;
+            }
+
+            Console.WriteLine($"当前信息：{std.Name} | 语文：{std.Chinese} | 数学：{std.Math} | 英语：{std.English}");
+            Console.WriteLine("留空表示不修改");
+
+            Console.WriteLine("新姓名：");
+            string newName = Console.ReadLine();
+            if (!string.IsNullOrEmpty(newName)) std.Name = newName;
+
+            Console.WriteLine("新语文成绩：");
+            string newChinese = Console.ReadLine();
+            if(!string.IsNullOrEmpty(newChinese))
+            {
+                if (!double.TryParse(newChinese, out double new_chinese))
+                {
+                    Console.WriteLine("格式错误！");
+                    return;
+                }
+                if (new_chinese < 0 || new_chinese > 100)
+                {
+                    Console.WriteLine("成绩必须在0-100之间！");
+                    return;
+                }
+                std.Chinese = new_chinese;
+            }
+
+            Console.WriteLine("新数学成绩：");
+            string newMath = Console.ReadLine();
+            if (!string.IsNullOrEmpty(newMath))
+            {
+                if (!double.TryParse(newMath, out double new_math))
+                {
+                    Console.WriteLine("格式错误！");
+                    return;
+                }
+                if (new_math < 0 || new_math > 100)
+                {
+                    Console.WriteLine("成绩必须在0-100之间！");
+                    return;
+                }
+                std.Math = new_math;
+            }
+
+            Console.WriteLine("新英语成绩：");
+            string newEnglish = Console.ReadLine();
+            if (!string.IsNullOrEmpty(newEnglish))
+            {
+                if (!double.TryParse(newEnglish, out double new_english))
+                {
+                    Console.WriteLine("格式错误！");
+                    return;
+                }
+                if (new_english < 0 || new_english > 100)
+                {
+                    Console.WriteLine("成绩必须在0-100之间！");
+                    return;
+                }
+                std.English = new_english;
+            }
+
+            Console.WriteLine("修改成功！");
         }
     }
 
