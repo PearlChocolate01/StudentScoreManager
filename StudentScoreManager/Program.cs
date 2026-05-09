@@ -27,6 +27,9 @@ namespace StudentScoreManager
                     case "3":
                         UpdateStudent();
                         break;
+                    case "4":
+                        SearchStudent();
+                        break;
                     default:
                         Console.WriteLine("输入无效，请重新选择");
                         break;
@@ -44,6 +47,7 @@ namespace StudentScoreManager
             Console.WriteLine("1. 添加学生");
             Console.WriteLine("2. 删除学生");
             Console.WriteLine("3. 修改学生信息");
+            Console.WriteLine("4. 查询学生");
             Console.WriteLine("======================================");
             Console.WriteLine("请选择操作：");
         }
@@ -205,6 +209,47 @@ namespace StudentScoreManager
             }
 
             Console.WriteLine("修改成功！");
+        }
+    
+        static void SearchStudent()
+        {
+            Console.WriteLine("\n--- 查询学生 ---");
+            Console.WriteLine("1. 按学号查询");
+            Console.WriteLine("2. 按姓名查询（支持模糊）");
+            Console.WriteLine("请选择：");
+
+            string choice = Console.ReadLine();
+            if(choice == "1")
+            {
+                Console.WriteLine("请输入学号：");
+                string id = Console.ReadLine();
+                Student std = students.Find(s => s.Id == id);
+                if(std == null)
+                {
+                    Console.WriteLine("未找到该学生");
+                    return;
+                }
+                Console.WriteLine($"学号：{std.Id} | 姓名：{std.Name} | 语文：{std.Chinese} | 数学：{std.Math} | 英语：{std.English}");
+            }
+            else if(choice == "2")
+            {
+                Console.WriteLine("请输入姓名：");
+                string name = Console.ReadLine();
+                List<Student> stds = students.FindAll(s => s.Name.Contains(name));
+                if(stds.Count == 0)
+                {
+                    Console.WriteLine("未找到学生");
+                    return;
+                }
+                foreach(var std in stds)
+                {
+                    Console.WriteLine($"学号：{std.Id} | 姓名：{std.Name} | 语文：{std.Chinese} | 数学：{std.Math} | 英语：{std.English}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("无效选择");
+            }
         }
     }
 
