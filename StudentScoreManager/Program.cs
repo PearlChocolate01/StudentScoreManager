@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace StudentScoreManager
 {
     class Program
     {
+        static string DataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "students_data.txt");
         static List<Student> students = new List<Student>();
         static void Main(string[] args)
         {
@@ -30,6 +33,21 @@ namespace StudentScoreManager
                     case "4":
                         SearchStudent();
                         break;
+                    case "5":
+                        ShowAllStudents();
+                        break;
+                    case "6":
+                        SaveToFile();
+                        break;
+                    case "7":
+                        LoadFromFileByCovering();
+                        break;
+                    case "8":
+                        LoadFromFileByAdding();
+                        break;
+                    case "0":
+                        Console.WriteLine("再见！");
+                        return;
                     default:
                         Console.WriteLine("输入无效，请重新选择");
                         break;
@@ -48,6 +66,11 @@ namespace StudentScoreManager
             Console.WriteLine("2. 删除学生");
             Console.WriteLine("3. 修改学生信息");
             Console.WriteLine("4. 查询学生");
+            Console.WriteLine("5. 显示所有学生（按总分排名）");
+            Console.WriteLine("6. 保存数据到文件");
+            Console.WriteLine("7. 从文件加载数据（覆盖）");
+            Console.WriteLine("8. 从文件加载数据（新增）");
+            Console.WriteLine("0. 退出");
             Console.WriteLine("======================================");
             Console.WriteLine("请选择操作：");
         }
@@ -109,7 +132,7 @@ namespace StudentScoreManager
                 Id = id,
                 Name = name,
                 Chinese = chinese,
-                Math = math,
+                Mathe = math,
                 English = english
             };
             students.Add(std);
@@ -150,7 +173,7 @@ namespace StudentScoreManager
                 return;
             }
 
-            Console.WriteLine($"当前信息：{std.Name} | 语文：{std.Chinese} | 数学：{std.Math} | 英语：{std.English}");
+            Console.WriteLine($"当前信息：{std.Name} | 语文：{std.Chinese} | 数学：{std.Mathe} | 英语：{std.English}");
             Console.WriteLine("留空表示不修改");
 
             Console.WriteLine("新姓名：");
@@ -188,7 +211,7 @@ namespace StudentScoreManager
                     Console.WriteLine("成绩必须在0-100之间！");
                     return;
                 }
-                std.Math = new_math;
+                std.Mathe = new_math;
             }
 
             Console.WriteLine("新英语成绩：");
@@ -229,7 +252,7 @@ namespace StudentScoreManager
                     Console.WriteLine("未找到该学生");
                     return;
                 }
-                Console.WriteLine($"学号：{std.Id} | 姓名：{std.Name} | 语文：{std.Chinese} | 数学：{std.Math} | 英语：{std.English}");
+                Console.WriteLine($"学号：{std.Id} | 姓名：{std.Name} | 语文：{std.Chinese} | 数学：{std.Mathe} | 英语：{std.English}");
             }
             else if(choice == "2")
             {
@@ -243,13 +266,74 @@ namespace StudentScoreManager
                 }
                 foreach(var std in stds)
                 {
-                    Console.WriteLine($"学号：{std.Id} | 姓名：{std.Name} | 语文：{std.Chinese} | 数学：{std.Math} | 英语：{std.English}");
+                    Console.WriteLine($"学号：{std.Id} | 姓名：{std.Name} | 语文：{std.Chinese} | 数学：{std.Mathe} | 英语：{std.English}");
                 }
             }
             else
             {
                 Console.WriteLine("无效选择");
             }
+        }
+    
+        static void ShowAllStudents()
+        {
+            if(students.Count == 0)
+            {
+                Console.WriteLine("暂无学生数据");
+                return;
+            }
+
+            var sortedStudents = students.OrderByDescending(s => s.Total).ToList();
+            Console.WriteLine("\n--- 学生成绩列表 ---");
+            Console.WriteLine("排名\t学号\t姓名\t语文\t数学\t英语\t总分\t均分");
+            Console.WriteLine("------------------------------------------------------------");
+
+            for(int i = 0; i < sortedStudents.Count; i++)
+            {
+                var s = sortedStudents[i];
+                Console.WriteLine($"{i + 1}\t{s.Id}\t{s.Name}\t{s.Chinese}\t{s.Mathe}\t{s.English}\t{s.Total}\t{s.Average}");
+            }
+        }
+
+        static void SaveToFile()
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(
+                    System.Text.Unicode.UnicodeRanges.BasicLatin,      // 英文、数字
+                    System.Text.Unicode.UnicodeRanges.CjkUnifiedIdeographs  // 常用中文
+                )
+            };
+            string json = JsonSerializer.Serialize(students, options);
+            File.WriteAllText(DataPath, json);
+            Console.WriteLine("数据已保存到“我的文档/students_data.txt”");
+        }
+
+        static void LoadFromFileByCovering()
+        {
+            if (!File.Exists(DataPath))
+            {
+                Console.WriteLine("文件不存在");
+                return;
+            }
+
+            string json = File.ReadAllText(DataPath);
+            var stdList = JsonSerializer.Deserialize<List<Student>>(json);
+            if (stdList != null || stdList.Count > 0) 
+            {
+                students = stdList;
+                Console.WriteLine($"成功加载{students.Count}条数据");
+            }
+            else
+            {
+                Console.WriteLine("数据不存在");
+            }
+        }
+
+        static void LoadFromFileByAdding()
+        {
+
         }
     }
 
@@ -274,14 +358,14 @@ namespace StudentScoreManager
         /// <summary>
         /// 数学成绩
         /// </summary>
-        public double Math { get; set; }
+        public double Mathe { get; set; }
         /// <summary>
         /// 总分（只读属性，自动计算）
         /// </summary>
-        public double Total => Chinese + English + Math;
+        public double Total => Chinese + English + Mathe;
         /// <summary>
         /// 平均分（只读属性，自动计算）
         /// </summary>
-        public double Average => Total / 3;
+        public double Average => Math.Round(Total / 3, 2);
     }
 }
