@@ -40,10 +40,10 @@ namespace StudentScoreManager
                         SaveToFile();
                         break;
                     case "7":
-                        LoadFromFileByCovering();
+                        LoadFromFileByInit();
                         break;
                     case "8":
-                        LoadFromFileByAdding();
+                        LoadFromFileByUpdate();
                         break;
                     case "0":
                         Console.WriteLine("再见！");
@@ -68,8 +68,8 @@ namespace StudentScoreManager
             Console.WriteLine("4. 查询学生");
             Console.WriteLine("5. 显示所有学生（按总分排名）");
             Console.WriteLine("6. 保存数据到文件");
-            Console.WriteLine("7. 从文件加载数据（覆盖）");
-            Console.WriteLine("8. 从文件加载数据（新增）");
+            Console.WriteLine("7. 从文件加载数据（重置）");
+            Console.WriteLine("8. 从文件加载数据（更新）");
             Console.WriteLine("0. 退出");
             Console.WriteLine("======================================");
             Console.WriteLine("请选择操作：");
@@ -310,7 +310,7 @@ namespace StudentScoreManager
             Console.WriteLine("数据已保存到“我的文档/students_data.txt”");
         }
 
-        static void LoadFromFileByCovering()
+        static void LoadFromFileByInit()
         {
             if (!File.Exists(DataPath))
             {
@@ -331,9 +331,47 @@ namespace StudentScoreManager
             }
         }
 
-        static void LoadFromFileByAdding()
+        static void LoadFromFileByUpdate()
         {
+            if (!File.Exists(DataPath))
+            {
+                Console.WriteLine("文件不存在");
+                return;
+            }
 
+            string json = File.ReadAllText(DataPath);
+            var stdList = JsonSerializer.Deserialize<List<Student>>(json);
+            if (stdList != null || stdList.Count > 0)
+            {
+                int index = 1;
+                int validCount = 0;
+                foreach(var newStd in stdList)
+                {
+                    if (string.IsNullOrEmpty(newStd.Id) || string.IsNullOrEmpty(newStd.Name))
+                    {
+                        Console.WriteLine($"第{index++}条数据信息不完整");
+                        continue;
+                    }
+                    var oldStd = students.FirstOrDefault(s => s.Id == newStd.Id);
+                    if (oldStd == null)
+                    {
+                        students.Add(newStd);
+                    }
+                    else
+                    {
+                        oldStd.Chinese = newStd.Chinese;
+                        oldStd.Mathe = newStd.Mathe;
+                        oldStd.English = newStd.English;
+                    }
+                    index++;
+                    validCount++;
+                }
+                Console.WriteLine($"成功加载{validCount}条数据");
+            }
+            else
+            {
+                Console.WriteLine("数据不存在");
+            }
         }
     }
 
